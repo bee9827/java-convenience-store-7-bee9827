@@ -4,12 +4,22 @@ import java.math.BigDecimal;
 
 public class MemberShip {
     public static BigDecimal DISCOUNT = new BigDecimal("0.3");
-    public static Long getAfterDiscountPrice(Long price){
-        return price - getDiscountPrice(price);
+    private boolean isActive;
+    private Long price;
+
+    public MemberShip(boolean isActive, Long price) {
+        this.isActive = isActive;
+        this.price = price;
     }
-    public static Long getDiscountPrice(Long price){
+
+    public Long getAfterDiscountPrice() {
+        return price - getDiscountPrice();
+    }
+
+    public Long getDiscountPrice() {
+        if(!isActive) { return 0L;}
         long discountPrice = new BigDecimal(price).multiply(DISCOUNT).longValue();
-        if(discountPrice > 8000) discountPrice = 8000;
+        if (discountPrice > 8000) discountPrice = 8000;
         return discountPrice;
     }
 

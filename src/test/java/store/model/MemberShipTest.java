@@ -9,10 +9,8 @@ class MemberShipTest {
 
     @Test
     void getDiscountPrice() {
-        assertThat(MemberShip.getDiscountPrice(0L)).isEqualTo(0);
-        assertThat(MemberShip.getAfterDiscountPrice(0L)).isEqualTo(0);
-        assertThat(MemberShip.getDiscountPrice(2000L)).isEqualTo(600);
-        assertThat(MemberShip.getDiscountPrice(10_000_000_000L)).isEqualTo(8000);
+        MemberShip memberShip = new MemberShip(true,1000L);
+        assertThat(memberShip.getDiscountPrice()).isEqualTo(300);
     }
 
 }

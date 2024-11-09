@@ -13,7 +13,7 @@ public class ProductPromotion {
         this.promotion = promotion;
     }
 
-    public ProductPromotion order(Integer quantity) {
+        public ProductPromotion order(Integer quantity) {
         Product ordered = product.order(quantity);
         return new ProductPromotion(ordered, promotion);
     }
@@ -39,19 +39,21 @@ public class ProductPromotion {
         return product.getName();
     }
 
-    public Integer getProductPrice() {
-        return product.getPrice() * product.getQuantity();
+    public Long getProductPrice() {
+        return (long)product.getPrice() * product.getQuantity();
     }
 
     public Integer getProductQuantity() {
         return product.getQuantity();
     }
 
-    public Integer getAppliedPromotionPrice() {
-        return getAppliedPromotionQuantity() * product.getPrice();
+    public Long getAppliedPromotionPrice() {
+        if(promotion == null) return 0L;
+        return getAppliedPromotionQuantity() * (long)product.getPrice();
     }
 
     public Integer getAppliedPromotionQuantity() {
+        if(promotion == null) return 0;
         return product.getQuantity() / (promotion.getType().getGet() + promotion.getType().getBuy());
     }
 

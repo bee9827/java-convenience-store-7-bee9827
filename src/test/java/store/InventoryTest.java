@@ -28,7 +28,7 @@ class InventoryTest {
         ));
 
 
-        assertThat(stocks.order("콜라", 10).getItems().getFirst().getProductQuantity()).isEqualTo(10);
+        assertThat(stocks.order("콜라", 10).getFirst().getProductQuantity()).isEqualTo(10);
         assertThatThrownBy(() -> stocks.order("콜라", 16))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");

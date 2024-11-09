@@ -23,7 +23,7 @@ public class Inventory {
         return Collections.unmodifiableList(items);
     }
 
-    public Inventory order(String name, Integer quantity) {
+    public List<ProductPromotion> order(String name, Integer quantity) {
         List<ProductPromotion> targetItems = findByName(name);
         validate(targetItems, quantity);
 
@@ -32,16 +32,46 @@ public class Inventory {
         for (ProductPromotion targetItem : targetItems) {
             orderedItems.add(targetItem.order(quantity));
         }
-        return new Inventory(orderedItems);
+        return orderedItems;
     }
 
-    private Integer getQuantity(String name) {
+    public Integer getQuantity(String name) {
         final List<ProductPromotion> products = findByName(name);
         validateName(products);
 
         return products.stream()
                 .map(ProductPromotion::getProductQuantity)
                 .reduce(Integer::sum)
+                .get();
+    }
+
+    public Long getPrice(String name) {
+        final List<ProductPromotion> products = findByName(name);
+        validateName(products);
+
+        return products.stream()
+                .map(ProductPromotion::getProductPrice)
+                .reduce(Long::sum)
+                .get();
+    }
+
+    public Integer getDiscountQuantity(String name) {
+        final List<ProductPromotion> products = findByName(name);
+        validateName(products);
+
+        return products.stream()
+                .map(ProductPromotion::getAppliedPromotionQuantity)
+                .reduce(Integer::sum)
+                .get();
+    }
+
+    public Long getDiscountPrice(String name) {
+        final List<ProductPromotion> products = findByName(name);
+        validateName(products);
+
+        return products.stream()
+                .map(ProductPromotion::getAppliedPromotionPrice)
+                .reduce(Long::sum)
                 .get();
     }
 
