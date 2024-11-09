@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ProductTest {
-    public static Product product = new Product("콜라",1000,10, null);
+    public static Product product = new Product("콜라",1000,10, "탄산 2+1");
 
     public
     @Test

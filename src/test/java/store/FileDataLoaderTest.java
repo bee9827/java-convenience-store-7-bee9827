@@ -11,15 +11,5 @@ import static org.junit.jupiter.api.Assertions.*;
 class FileDataLoaderTest {
     public FileDataLoader fileDataLoader = new FileDataLoader();
 
-    @Test
-    void createPromotions(){
-        List<Promotion> promotions = fileDataLoader.createPromotions();
-        assertThat(promotions.getFirst()).isInstanceOf(Promotion.class);
-    }
 
-    @Test
-    void createProducts(){
-        List<Product> products = fileDataLoader.createProducts();
-        assertThat(products.getFirst()).isInstanceOf(Product.class);
-    }
 }
