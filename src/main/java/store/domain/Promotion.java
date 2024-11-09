@@ -1,8 +1,5 @@
-package store;
+package store.domain;
 
-
-import camp.nextstep.edu.missionutils.Console;
-import camp.nextstep.edu.missionutils.DateTimes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

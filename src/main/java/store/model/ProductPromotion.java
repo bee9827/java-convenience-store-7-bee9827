@@ -1,6 +1,8 @@
-package store;
+package store.model;
 
 import camp.nextstep.edu.missionutils.DateTimes;
+import store.domain.Product;
+import store.domain.Promotion;
 
 public class ProductPromotion {
     private final Product product;

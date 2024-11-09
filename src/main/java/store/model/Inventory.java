@@ -1,9 +1,8 @@
-package store;
+package store.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 // TODO
 //  - [x] 유효성 체크
@@ -14,61 +13,60 @@ import java.util.Map;
 //  - [ ] 프로모션 재고가 부족하여 일부 수량을 프로모션 혜택 없이 결제해야 하는 경우, 일부 수량에 대해 정가로 결제하게 됨을 안내한다.
 
 public class Inventory {
-    private final List<Product> products;
+    private final List<ProductPromotion> stocks;
 
-    public Inventory(List<Product> products) {
-        this.products = products;
+    public Inventory(List<ProductPromotion> stocks) {
+        this.stocks = stocks;
     }
 
     public Inventory order(String name, Integer quantity) {
-        List<Product> stocks = findByName(name);
-        validate(stocks, quantity);
+        List<ProductPromotion> targetStocks = findByName(name);
+        validate(targetStocks, quantity);
 
-        List<Product> ordered = new ArrayList<Product>();
-        for (Product productStock : stocks) {
-            Product orderedProduct = productStock.order(quantity);
-            quantity -= orderedProduct.getQuantity();
-            ordered.add(orderedProduct);
+        List<ProductPromotion> orderedStocks = new ArrayList<ProductPromotion>();
+
+        for (ProductPromotion targetStock : targetStocks) {
+            orderedStocks.add(targetStock.order(quantity));
         }
-        return new Inventory(ordered);
+        return new Inventory(orderedStocks);
     }
 
     public Integer getQuantity(String name) {
-        final List<Product> products = findByName(name);
+        final List<ProductPromotion> products = findByName(name);
         validateName(products);
 
         return products.stream()
-                .map(Product::getQuantity)
+                .map(ProductPromotion::getProductQuantity)
                 .reduce(Integer::sum)
                 .get();
     }
 
-    public List<Product> getProducts() {
-        return Collections.unmodifiableList(products);
+    public List<ProductPromotion> getProductPromotions() {
+        return Collections.unmodifiableList(stocks);
     }
 
-    private void validate(List<Product> stocks, Integer quantity) {
+    private void validate(List<ProductPromotion> stocks, Integer quantity) {
         validateName(stocks);
         validateQuantity(stocks, quantity);
     }
 
-    private void validateName(List<Product> stocks) {
+    private void validateName(List<ProductPromotion> stocks) {
         if (stocks == null || stocks.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 상품입니다. 다시 입력해 주세요.");
         }
     }
 
-    private void validateQuantity(List<Product> stocks, Integer quantity) {
+    private void validateQuantity(List<ProductPromotion> stocks, Integer quantity) {
         stocks.stream()
-                .map(Product::getQuantity)
+                .map(ProductPromotion::getProductQuantity)
                 .reduce(Integer::sum)
                 .filter(sum -> sum >= quantity)
                 .orElseThrow(() -> new IllegalArgumentException("재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요."));
     }
 
-    private List<Product> findByName(String name) {
-        return products.stream()
-                .filter(product -> product.getName().equals(name))
+    private List<ProductPromotion> findByName(String name) {
+        return stocks.stream()
+                .filter(stock -> stock.getProductName().equals(name))
                 .toList();
     }
 }

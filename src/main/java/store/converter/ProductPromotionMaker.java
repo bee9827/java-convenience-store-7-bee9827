@@ -1,9 +1,15 @@
-package store;
+package store.converter;
+
+import store.file.DataLoader;
+import store.file.FileDataLoader;
+import store.domain.Product;
+import store.model.ProductPromotion;
+import store.domain.Promotion;
+import store.domain.PromotionType;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

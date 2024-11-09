@@ -2,12 +2,13 @@ package store;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import store.domain.Promotion;
+import store.domain.PromotionType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class PromotionTest {
     public static Promotion promotionTPO = new Promotion(

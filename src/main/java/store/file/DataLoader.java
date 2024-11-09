@@ -1,4 +1,4 @@
-package store;
+package store.file;
 
 import java.io.FileNotFoundException;
 import java.util.List;

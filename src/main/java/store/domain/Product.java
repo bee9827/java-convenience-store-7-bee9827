@@ -1,6 +1,4 @@
-package store;
-
-import camp.nextstep.edu.missionutils.DateTimes;
+package store.domain;
 
 public class Product {
     private final String name;
