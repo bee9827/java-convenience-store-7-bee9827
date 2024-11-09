@@ -13,25 +13,29 @@ import java.util.List;
 //  - [ ] 프로모션 재고가 부족하여 일부 수량을 프로모션 혜택 없이 결제해야 하는 경우, 일부 수량에 대해 정가로 결제하게 됨을 안내한다.
 
 public class Inventory {
-    private final List<ProductPromotion> stocks;
+    private final List<ProductPromotion> items;
 
-    public Inventory(List<ProductPromotion> stocks) {
-        this.stocks = stocks;
+    public Inventory(List<ProductPromotion> items) {
+        this.items = items;
+    }
+
+    public List<ProductPromotion> getItems() {
+        return Collections.unmodifiableList(items);
     }
 
     public Inventory order(String name, Integer quantity) {
-        List<ProductPromotion> targetStocks = findByName(name);
-        validate(targetStocks, quantity);
+        List<ProductPromotion> targetItems = findByName(name);
+        validate(targetItems, quantity);
 
-        List<ProductPromotion> orderedStocks = new ArrayList<ProductPromotion>();
+        List<ProductPromotion> orderedItems = new ArrayList<ProductPromotion>();
 
-        for (ProductPromotion targetStock : targetStocks) {
-            orderedStocks.add(targetStock.order(quantity));
+        for (ProductPromotion targetItem : targetItems) {
+            orderedItems.add(targetItem.order(quantity));
         }
-        return new Inventory(orderedStocks);
+        return new Inventory(orderedItems);
     }
 
-    public Integer getQuantity(String name) {
+    private Integer getQuantity(String name) {
         final List<ProductPromotion> products = findByName(name);
         validateName(products);
 
@@ -41,23 +45,19 @@ public class Inventory {
                 .get();
     }
 
-    public List<ProductPromotion> getProductPromotions() {
-        return Collections.unmodifiableList(stocks);
+    private void validate(List<ProductPromotion> items, Integer quantity) {
+        validateName(items);
+        validateQuantity(items, quantity);
     }
 
-    private void validate(List<ProductPromotion> stocks, Integer quantity) {
-        validateName(stocks);
-        validateQuantity(stocks, quantity);
-    }
-
-    private void validateName(List<ProductPromotion> stocks) {
-        if (stocks == null || stocks.isEmpty()) {
+    private void validateName(List<ProductPromotion> items) {
+        if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 상품입니다. 다시 입력해 주세요.");
         }
     }
 
-    private void validateQuantity(List<ProductPromotion> stocks, Integer quantity) {
-        stocks.stream()
+    private void validateQuantity(List<ProductPromotion> items, Integer quantity) {
+        items.stream()
                 .map(ProductPromotion::getProductQuantity)
                 .reduce(Integer::sum)
                 .filter(sum -> sum >= quantity)
@@ -65,8 +65,8 @@ public class Inventory {
     }
 
     private List<ProductPromotion> findByName(String name) {
-        return stocks.stream()
-                .filter(stock -> stock.getProductName().equals(name))
+        return items.stream()
+                .filter(item -> item.getProductName().equals(name))
                 .toList();
     }
 }

@@ -31,6 +31,10 @@ public class ProductPromotion {
         return promotion.checkQuantity(quantity);
     }
 
+    public String getPromotionName() {
+        return product.getPromotionName();
+    }
+
     public String getProductName() {
         return product.getName();
     }
@@ -44,10 +48,11 @@ public class ProductPromotion {
     }
 
     public Integer getAppliedPromotionPrice() {
-        return getAppliedPromotionQuantity() * getProductPrice();
+        return getAppliedPromotionQuantity() * product.getPrice();
     }
 
     public Integer getAppliedPromotionQuantity() {
-        return getProductQuantity() / (promotion.getType().getGet() + promotion.getType().getBuy());
+        return product.getQuantity() / (promotion.getType().getGet() + promotion.getType().getBuy());
     }
+
 }
