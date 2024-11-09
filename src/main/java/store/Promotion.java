@@ -21,6 +21,15 @@ public class Promotion {
         this.endDate = endDate;
     }
 
+    public boolean checkQuantity(int quantity) {
+        return quantity % (type.getBuy() + type.getGet()) == type.getBuy();
+    }
+
+    public boolean checkDateTime(LocalDateTime dateTime) {
+        return dateTime.isAfter(startDate.atStartOfDay())
+                && dateTime.isBefore(endDate.plusDays(1).atStartOfDay());
+    }
+
     public String getName() {
         return name;
     }
@@ -29,16 +38,10 @@ public class Promotion {
         return type;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
-    }
+    public LocalDate getStartDate() { return startDate; }
 
     public LocalDate getEndDate() {
         return endDate;
     }
 
-    public boolean validateDateTime(LocalDateTime dateTime) {
-        return dateTime.isAfter(startDate.atStartOfDay())
-                && dateTime.isBefore(endDate.plusDays(1).atStartOfDay());
-    }
 }
