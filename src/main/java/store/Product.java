@@ -6,16 +6,14 @@ public class Product {
     private final String name;
     private final Integer price;
     private Integer quantity;
-    private final Promotion promotion;
-    private final ProductStatus productStatus;
+    private final String promotionName;
 
 
-    public Product(String name, Integer price, Integer quantity, Promotion promotion, ProductStatus productStatus) {
+    public Product(String name, Integer price, Integer quantity, String promotionName) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
-        this.promotion = promotion;
-        this.productStatus = productStatus;
+        this.promotionName = promotionName;
     }
 
     public Product order(Integer orderQuantity) {
@@ -24,14 +22,7 @@ public class Product {
         }
 
         quantity -= orderQuantity;
-        return new Product(name, price, orderQuantity, promotion, ProductStatus.ORDERED);
-    }
-
-    public boolean checkPromotionApplicable(int quantity) {
-        if (checkExpirationDate()) {
-            return quantity % (promotion.getType().getBuy() + promotion.getType().getGet()) == promotion.getType().getBuy();
-        }
-        return false;
+        return new Product(name, price, orderQuantity, promotionName);
     }
 
     public String getName() {
@@ -46,19 +37,8 @@ public class Product {
         return quantity;
     }
 
-    public Promotion getPromotion() {
-        return promotion;
-    }
-
-    public ProductStatus getProductStatus() {
-        return productStatus;
-    }
-
-    private boolean checkExpirationDate() {
-        if (promotion == null) {
-            return false;
-        }
-        return promotion.validateDateTime(DateTimes.now());
+    public String getPromotionName() {
+        return promotionName;
     }
 
 }
