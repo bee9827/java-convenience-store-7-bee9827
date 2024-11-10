@@ -21,11 +21,12 @@ public class ProductPromotionMaker {
     private final List<Promotion> promotions;
     private final List<Product> products;
 
-    public ProductPromotionMaker(){
+    public ProductPromotionMaker() {
         //한번만 실행된다.
         this.promotions = createPromotions();
         validatePromotion();
         this.products = createProducts();
+        checkAndAddProduct();
     }
 
     public List<Item> makeProdcutPromotions() {
@@ -55,18 +56,18 @@ public class ProductPromotionMaker {
     }
 
     private Promotion findPromotionByName(String promotionName) {
-        if(Objects.equals(promotionName, "null")) return null;
+        if (Objects.equals(promotionName, "null")) return null;
         return promotions.stream()
                 .filter(promotion -> promotion.getName().equals(promotionName))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException(promotionName+" 프로모션을 찾을수 없습니다."));
+                .orElseThrow(() -> new IllegalStateException(promotionName + " 프로모션을 찾을수 없습니다."));
     }
 
     private List<Promotion> createPromotions() {
         DataLoader<Promotion> loader = new FileDataLoader<>();
         try {
             return loader.loadData(promotionFilePath, this::makePromotion);
-        }catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         return null;
@@ -76,8 +77,7 @@ public class ProductPromotionMaker {
         DataLoader<Product> loader = new FileDataLoader<>();
         try {
             return loader.loadData(productFilePath, this::makeProduct);
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         return null;
@@ -99,5 +99,26 @@ public class ProductPromotionMaker {
         LocalDate endDate = LocalDate.parse(tokens[4]);
 
         return new Promotion(name, type, startDate, endDate);
+    }
+
+    private List<Product> findByProductName(String productName) {
+        return products.stream()
+                .filter(product -> product.getName().equals(productName))
+                .toList();
+    }
+
+    private List<Product> getPromotionProduct() {
+        return products.stream()
+                .filter(product -> !product.getPromotionName().equals("null"))
+                .toList();
+    }
+
+    private void checkAndAddProduct() {
+        List<Product> promotionProducts = getPromotionProduct();
+        for (Product promotionProduct : promotionProducts) {
+            if (findByProductName(promotionProduct.getName()).size() == 1) {
+                this.products.add(new Product(promotionProduct.getName(), promotionProduct.getPrice(), 0, "null"));
+            }
+        }
     }
 }
