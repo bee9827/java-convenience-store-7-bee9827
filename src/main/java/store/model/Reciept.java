@@ -5,11 +5,11 @@ import java.util.List;
 
 public class Reciept {
     private DecimalFormat df = new DecimalFormat("###,###");
-    List<Inventory> inventories;
+    List<OrderedInventory> orderedInventories;
     MemberShip memberShip;
 
-    public Reciept(List<Inventory> inventories, MemberShip memberShip) {
-        this.inventories = inventories;
+    public Reciept(List<OrderedInventory> orderedInventories, MemberShip memberShip) {
+        this.orderedInventories = orderedInventories;
         this.memberShip = memberShip;
     }
 
@@ -23,14 +23,14 @@ public class Reciept {
         Long price = 0L;
         Long discountPrice = 0L;
 
-        for(Inventory inventory : inventories){
-            String name = inventory.getItems().getFirst().getProductName();
-            quantity += inventory.getQuantity(name);
-            price += inventory.getPrice(name);
-            discountPrice += inventory.getDiscountPrice(name);
+        for(OrderedInventory orderedInventory : orderedInventories){
+            String name = orderedInventory.getName();
+            quantity += orderedInventory.getQuantity();
+            price += orderedInventory.getPrice();
+            discountPrice += orderedInventory.getDiscountPrice();
         }
         bottomSB.append("총구매액\t\t").append(df.format(quantity)).append("\t").append(df.format(price)).append("\n");
-        bottomSB.append("행사할인\t\t\t").append(df.format(discountPrice)).append("\n");
+        bottomSB.append("행사할인\t\t\t-").append(df.format(discountPrice)).append("\n");
         bottomSB.append("멤버십할인\t\t\t-").append(df.format(memberShip.getDiscountPrice())).append("\n");
         bottomSB.append("내실돈\t\t\t ").append(df.format(memberShip.getAfterDiscountPrice())).append("\n");
 
@@ -39,10 +39,10 @@ public class Reciept {
 
     public StringBuilder makeTop() {
         StringBuilder topSB = new StringBuilder("==============W 편의점================\n");
-        for (Inventory inventory : inventories) {
-            String name = inventory.getItems().getFirst().getProductName();
-            Integer quantity = inventory.getQuantity(name);
-            Long price = inventory.getPrice(name);
+        for (OrderedInventory orderedInventory : orderedInventories) {
+            String name = orderedInventory.getName();
+            Integer quantity = orderedInventory.getQuantity();
+            Long price = orderedInventory.getPrice();
 
             addProduct(name, quantity, price, topSB);
         }
@@ -51,9 +51,9 @@ public class Reciept {
 
     public StringBuilder makeMiddle() {
         StringBuilder middleSb = new StringBuilder("=============증\t정===============\n");
-        for(Inventory inventory : inventories){
-            String name = inventory.getItems().getFirst().getProductName();
-            Integer discountQuantity = inventory.getDiscountQuantity(name);
+        for(OrderedInventory orderedInventory : orderedInventories){
+            String name = orderedInventory.getName();
+            Integer discountQuantity = orderedInventory.getDiscountQuantity();
 
             if(discountQuantity > 0){
                 addPromotion(name, discountQuantity,middleSb);
@@ -75,7 +75,7 @@ public class Reciept {
         sb.append(name)
                 .append("\t\t")
                 .append(df.format(quantity))
-                .append("\t");
+                .append("\n");
     }
 
 }

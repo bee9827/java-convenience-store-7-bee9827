@@ -14,13 +14,13 @@ public class StockList {
 
     public List<String> getStocks() {
         List<String> stocks = new ArrayList<String>();
-        for (ProductPromotion item : inventory.getItems()) {
+        for (Item item : inventory.getItems()) {
             stocks.add(makeInfo(item));
         }
         return stocks;
     }
 
-    private String makeInfo(ProductPromotion item) {
+    private String makeInfo(Item item) {
         return getName(item.getProductName()) + getPrice(item.getProductPrice())
                 + getQuantity(item.getProductQuantity()) + getPromotionName(item.getPromotionName());
     }

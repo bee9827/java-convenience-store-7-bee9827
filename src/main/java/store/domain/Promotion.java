@@ -19,7 +19,7 @@ public class Promotion {
     }
 
     public boolean checkQuantity(int quantity) {
-        return quantity % (type.getBuy() + type.getGet()) == type.getBuy();
+        return quantity % (type.getBuy() + type.getGet()) == 0;
     }
 
     public boolean checkDateTime(LocalDateTime dateTime) {
