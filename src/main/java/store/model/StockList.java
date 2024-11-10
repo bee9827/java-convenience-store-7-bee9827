@@ -30,16 +30,16 @@ public class StockList {
     }
 
     private String getPrice(Long price) {
-        return STR."\{decimalFormat.format(price)}원 ";
+        return decimalFormat.format(price) + "원 ";
     }
 
     private String getQuantity(Integer quantity) {
         if (quantity == 0) return "재고 없음 ";
-        return STR."\{decimalFormat.format(quantity)}개 ";
+        return decimalFormat.format(quantity) + "개 ";
     }
 
-    private String getPromotionName(String promotionName) {
-        if (promotionName.equals("null")) return "";
-        return promotionName;
+        private String getPromotionName (String promotionName){
+            if (promotionName.equals("null")) return "";
+            return promotionName;
+        }
     }
-}

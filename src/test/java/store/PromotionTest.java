@@ -40,13 +40,13 @@ class PromotionTest {
     @DisplayName("프로모션 적용가능한 개수 체크")
     @Test
     void checkPromotionApplicable() {
-        assertThat(promotionOPO.checkQuantity(1)).isTrue();
-        assertThat(promotionOPO.checkQuantity(3)).isTrue();
-        assertThat(promotionOPO.checkQuantity(2)).isFalse();
-        assertThat(promotionOPO.checkQuantity(4)).isFalse();
+        assertThat(promotionOPO.checkQuantity(2)).isTrue();
+        assertThat(promotionOPO.checkQuantity(4)).isTrue();
+        assertThat(promotionOPO.checkQuantity(1)).isFalse();
+        assertThat(promotionOPO.checkQuantity(3)).isFalse();
 
-        assertThat(promotionTPO.checkQuantity(2)).isTrue();
-        assertThat(promotionTPO.checkQuantity(5)).isTrue();
+        assertThat(promotionTPO.checkQuantity(3)).isTrue();
+        assertThat(promotionTPO.checkQuantity(6)).isTrue();
         assertThat(promotionTPO.checkQuantity(4)).isFalse();
     }
 }

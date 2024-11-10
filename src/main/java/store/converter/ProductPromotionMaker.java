@@ -59,7 +59,7 @@ public class ProductPromotionMaker {
         return promotions.stream()
                 .filter(promotion -> promotion.getName().equals(promotionName))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException(STR."\{promotionName} 프로모션을 찾을수 없습니다."));
+                .orElseThrow(() -> new IllegalStateException(promotionName+" 프로모션을 찾을수 없습니다."));
     }
 
     private List<Promotion> createPromotions() {

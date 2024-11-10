@@ -24,6 +24,7 @@ public class Inventory {
     }
 
     public OrderedInventory order(String name, Integer quantity) {
+        validate(name, quantity);
         List<Item> targetItems = findByName(name);
 
         List<OrderedItem> orderedItems = new ArrayList<OrderedItem>();
