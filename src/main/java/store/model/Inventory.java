@@ -25,7 +25,6 @@ public class Inventory {
 
     public OrderedInventory order(String name, Integer quantity) {
         List<Item> targetItems = findByName(name);
-        validate(targetItems, quantity);
 
         List<OrderedItem> orderedItems = new ArrayList<OrderedItem>();
 
@@ -58,9 +57,10 @@ public class Inventory {
         return promotionItem.getPromotionOutOfStock(quantity);
     }
 
-    private void validate(List<Item> items, Integer quantity) {
-        validateName(items);
-        validateQuantity(items, quantity);
+    public void validate(String name, Integer quantity) {
+        List<Item> targetItems = findByName(name);
+        validateName(targetItems);
+        validateQuantity(targetItems, quantity);
     }
 
     private void validateName(List<Item> items) {

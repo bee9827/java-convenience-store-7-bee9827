@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class OutputView {
-    public static String HEADER = "[ERROR]";
+    public static String HEADER = "[ERROR] ";
     public void printlnError(String errorMessage){
         System.out.println(HEADER + errorMessage);
     }
