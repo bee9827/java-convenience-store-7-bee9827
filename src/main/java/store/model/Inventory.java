@@ -25,20 +25,14 @@ public class Inventory {
 
     public OrderedInventory order(String name, Integer quantity) {
         validate(name, quantity);
-        List<Item> targetItems = findByName(name);
+        List<Item> targetItems = new ArrayList<>();
+        Item promotionItem = findNonePromotionItemByName(name);
+        if(promotionItem != null) {targetItems.add(promotionItem);}
 
-        List<OrderedItem> orderedItems = new ArrayList<OrderedItem>();
+        Item item = findNonePromotionItemByName(name);
+        if(item != null) {targetItems.add(item);}
 
-        for (Item targetItem : targetItems) {
-            OrderedItem orderedItem = targetItem.order(quantity);
-            quantity -= orderedItem.getProductQuantity();
-            orderedItems.add(orderedItem);
-            if (quantity == 0) {
-                break;
-            }
-
-        }
-        return new OrderedInventory(orderedItems);
+        return getOrderedInventory(quantity, targetItems);
     }
 
     //ordered method
@@ -64,6 +58,19 @@ public class Inventory {
         validateQuantity(targetItems, quantity);
     }
 
+    private static OrderedInventory getOrderedInventory(Integer quantity, List<Item> targetItems) {
+        List<OrderedItem> orderedItems = new ArrayList<OrderedItem>();
+        for (Item targetItem : targetItems) {
+            OrderedItem orderedItem = targetItem.order(quantity);
+            quantity -= orderedItem.getProductQuantity();
+            orderedItems.add(orderedItem);
+            if (quantity == 0) {
+                break;
+            }
+        }
+        return new OrderedInventory(orderedItems);
+    }
+
     private void validateName(List<Item> items) {
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 상품입니다. 다시 입력해 주세요.");
@@ -86,14 +93,14 @@ public class Inventory {
 
     private Item findPromotionItemByName(String name) {
         return findByName(name).stream()
-                .filter(item -> item.getPromotionName() != null)
+                .filter(item -> !item.getPromotionName().equals("null"))
                 .findAny()
                 .orElse(null);
     }
 
     private Item findNonePromotionItemByName(String name) {
         return findByName(name).stream()
-                .filter(item -> item.getPromotionName() == null)
+                .filter(item -> item.getPromotionName().equals("null"))
                 .findAny()
                 .orElse(null);
     }

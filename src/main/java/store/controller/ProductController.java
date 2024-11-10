@@ -4,15 +4,16 @@ import store.converter.ProductPromotionMaker;
 import store.model.*;
 import store.view.InputView;
 import store.view.OutputView;
+import store.view.Reciept;
+import store.view.StockList;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ProductController {
-    private final Pattern pattern = Pattern.compile("\\[([가-힣]*)-([0-9]+)]");
+    private final Pattern pattern = Pattern.compile("^\\[([가-힣A-z]+)-([0-9]+)]$");
     private final InputView inputView;
     private final OutputView outputView;
     private final Inventory inventory;
@@ -31,6 +32,10 @@ public class ProductController {
         MemberShip memberShip = askMembership(getTotalPrice(orderedInventories));
         outputView.printlnString(new Reciept(orderedInventories, memberShip).make());
         askContinue();
+
+        // TODO
+        // 잘된입력, 잘못된 입력 순서로 들어오면 되돌려야하지만(Transaction)
+        // 안된다. 하.... 언제하지
     }
 
     private Long getTotalPrice(List<OrderedInventory> orderedInventories) {
@@ -65,23 +70,58 @@ public class ProductController {
             if (inputView.readYesOrNo("감사합니다. 구매하고 싶은 다른 상품이 있나요?")) {
                 run();
             }
+            return;
         } catch (IllegalArgumentException e) {
             outputView.printlnError(e.getMessage());
+            askContinue();
         }
     }
 
     private List<OrderedInventory> orders(String input) {
-        Matcher matcher = pattern.matcher(input);
-
         List<OrderedInventory> orderedInventories = new ArrayList<>();
-        while (matcher.find()) {
-            orderedInventories.add(order(matcher.group(1), Integer.parseInt(matcher.group(2))));
+        List<String> names = getNameList(input);
+        List<Integer> quantities = getQuantityList(input);
+        validateInput(names, quantities);
+        for (int i = 0; i < names.size(); i++) {
+            orderedInventories.add(order(names.get(i), quantities.get(i)));
         }
         return orderedInventories;
     }
 
+    private void validateInput(List<String> names, List<Integer> quantities) {
+        for (int i = 0; i < names.size(); i++) {
+            inventory.validate(names.get(i), quantities.get(i));
+        }
+    }
+
+    private List<String> getNameList(String input) {
+        String[] productsAndQuantities = input.split(",");
+        List<String> names = new ArrayList<>();
+        for (String prodcutAndQuantity : productsAndQuantities) {
+            Matcher matcher = pattern.matcher(prodcutAndQuantity);
+            if (matcher.matches()) {
+                names.add(matcher.group(1));
+            }
+        }
+        if(productsAndQuantities.length != names.size()) throw new IllegalArgumentException("잘못된 입력입니다. 다시 입력해 주세요.");
+        return names;
+    }
+
+    private List<Integer> getQuantityList(String input) {
+        String[] productsAndQuantities = input.split(",");
+        List<Integer> quantities = new ArrayList<>();
+        for (String prodcutAndQuantity : productsAndQuantities) {
+            Matcher matcher = pattern.matcher(prodcutAndQuantity);
+            if (matcher.matches()) {
+                quantities.add(Integer.parseInt(matcher.group(2)));
+            }
+        }
+        if(productsAndQuantities.length != quantities.size()) throw new IllegalArgumentException("잘못된 입력입니다. 다시 입력해 주세요.");
+        return quantities;
+    }
+
     private OrderedInventory order(String name, Integer quantity) {
-        inventory.validate(name,quantity);
+        inventory.validate(name, quantity);
         Integer promotionNotAppliedQuantity = inventory.getPromotionOutOfStock(name, quantity); //재고없어서 못받은 개수 체크하여 구매할건지 ask
         if (promotionNotAppliedQuantity != 0) {
             return askPromotionNotAppliedAndGetItems(name, quantity, promotionNotAppliedQuantity);
@@ -105,7 +145,7 @@ public class ProductController {
 
     private OrderedInventory askPromotionNotAppliedAndGetItems(String name, Integer quantity, Integer promotionNotAppliedQuantity) {
         try {
-            if (inputView.readYesOrNo(String.format("현재 %s %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까?",name,promotionNotAppliedQuantity)))
+            if (inputView.readYesOrNo(String.format("현재 %s %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까?", name, promotionNotAppliedQuantity)))
                 return inventory.order(name, quantity);
             return inventory.order(name, quantity - promotionNotAppliedQuantity);
         } catch (IllegalArgumentException e) {

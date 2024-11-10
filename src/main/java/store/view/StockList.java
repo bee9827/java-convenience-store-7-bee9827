@@ -1,4 +1,7 @@
-package store.model;
+package store.view;
+
+import store.model.Inventory;
+import store.model.Item;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

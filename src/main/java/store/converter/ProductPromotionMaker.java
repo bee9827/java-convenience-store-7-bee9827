@@ -9,10 +9,7 @@ import store.model.Item;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProductPromotionMaker {
@@ -27,6 +24,11 @@ public class ProductPromotionMaker {
         validatePromotion();
         this.products = createProducts();
         checkAndAddProduct();
+        sortProduct();
+    }
+
+    private void sortProduct() {
+        products.sort(Comparator.comparing(Product::getName));
     }
 
     public List<Item> makeProdcutPromotions() {
