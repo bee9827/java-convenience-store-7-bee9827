@@ -4,19 +4,25 @@ import store.model.MemberShip;
 import store.model.OrderedInventory;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Reciept {
     private DecimalFormat df = new DecimalFormat("###,###");
-    List<OrderedInventory> orderedInventories;
-    MemberShip memberShip;
+    private List<OrderedInventory> orderedInventories;
+    private MemberShip memberShip;
 
+    public Reciept(){
+        orderedInventories = new ArrayList<OrderedInventory>();
+    }
     public Reciept(List<OrderedInventory> orderedInventories, MemberShip memberShip) {
         this.orderedInventories = orderedInventories;
         this.memberShip = memberShip;
     }
 
-    public String make() {
+    public String make(List<OrderedInventory> orderedInventory, MemberShip memberShip) {
+        this.orderedInventories = orderedInventory;
+        this.memberShip = memberShip;
         return makeTop().append(makeMiddle()).append(makeBottom()).toString();
     }
 

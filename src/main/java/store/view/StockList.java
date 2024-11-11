@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StockList {
-    DecimalFormat decimalFormat = new DecimalFormat("###,###");
-    Inventory inventory;
+    private final DecimalFormat decimalFormat = new DecimalFormat("###,###");
+    private final Inventory inventory;
 
     public StockList(Inventory inventory) {
         this.inventory = inventory;

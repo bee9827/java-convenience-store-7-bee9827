@@ -13,29 +13,37 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ProductController {
+    private static final String SEPARATOR = ",";
     private final Pattern pattern = Pattern.compile("^\\[([가-힣A-z]+)-([0-9]+)]$");
+
     private final InputView inputView;
     private final OutputView outputView;
     private final Inventory inventory;
 
+    private final Reciept reciept;
+    private final StockList stockList;
 
     public ProductController(InputView inputView, OutputView outputView) {
         this.inputView = inputView;
         this.outputView = outputView;
         inventory = new Inventory(new ProductPromotionMaker().makeProdcutPromotions());
+        reciept = new Reciept();
+        stockList = new StockList(inventory);
     }
 
 
     public void run() {
-        outputView.printList(new StockList(inventory).getStocks());
+        outputView.printList(stockList.getStocks());
+
         List<OrderedInventory> orderedInventories = askOrders();
         MemberShip memberShip = askMembership(getTotalPrice(orderedInventories));
-        outputView.printlnString(new Reciept(orderedInventories, memberShip).make());
-        askContinue();
 
+        outputView.printlnString(reciept.make(orderedInventories,memberShip));
+
+        askContinue();
         // TODO
-        // 잘된입력, 잘못된 입력 순서로 들어오면 되돌려야하지만(Transaction)
-        // 안된다. 하.... 언제하지
+        //  Transaction
+        //  트랜잭션이 안되니까 코드구조가 그냥 난장판이 된다.....
     }
 
     private Long getTotalPrice(List<OrderedInventory> orderedInventories) {
@@ -56,27 +64,6 @@ public class ProductController {
                 .get();
     }
 
-    private List<OrderedInventory> askOrders() {
-        try {
-            return orders(inputView.readItem());
-        } catch (IllegalArgumentException e) {
-            outputView.printlnError(e.getMessage());
-            return askOrders();
-        }
-    }
-
-    private void askContinue() {
-        try {
-            if (inputView.readYesOrNo("감사합니다. 구매하고 싶은 다른 상품이 있나요?")) {
-                run();
-            }
-            return;
-        } catch (IllegalArgumentException e) {
-            outputView.printlnError(e.getMessage());
-            askContinue();
-        }
-    }
-
     private List<OrderedInventory> orders(String input) {
         List<OrderedInventory> orderedInventories = new ArrayList<>();
         List<String> names = getNameList(input);
@@ -95,7 +82,7 @@ public class ProductController {
     }
 
     private List<String> getNameList(String input) {
-        String[] productsAndQuantities = input.split(",");
+        String[] productsAndQuantities = input.split(SEPARATOR);
         List<String> names = new ArrayList<>();
         for (String prodcutAndQuantity : productsAndQuantities) {
             Matcher matcher = pattern.matcher(prodcutAndQuantity);
@@ -108,7 +95,7 @@ public class ProductController {
     }
 
     private List<Integer> getQuantityList(String input) {
-        String[] productsAndQuantities = input.split(",");
+        String[] productsAndQuantities = input.split(SEPARATOR);
         List<Integer> quantities = new ArrayList<>();
         for (String prodcutAndQuantity : productsAndQuantities) {
             Matcher matcher = pattern.matcher(prodcutAndQuantity);
@@ -132,6 +119,37 @@ public class ProductController {
         return inventory.order(name, quantity);
     }
 
+    private List<OrderedInventory> askOrders() {
+        try {
+            return orders(inputView.readItem());
+        } catch (IllegalArgumentException e) {
+            outputView.printlnError(e.getMessage());
+            return askOrders();
+        }
+    }
+
+    private MemberShip askMembership(Long price) {
+        try {
+            return new MemberShip(inputView.readYesOrNo("멤버십 할인을 받으시겠습니까?"), price);
+        } catch (IllegalArgumentException e) {
+            outputView.printlnError(e.getMessage());
+            return askMembership(price);
+        }
+    }
+
+
+    private void askContinue() {
+        try {
+            if (inputView.readYesOrNo("감사합니다. 구매하고 싶은 다른 상품이 있나요?")) {
+                run();
+            }
+            return;
+        } catch (IllegalArgumentException e) {
+            outputView.printlnError(e.getMessage());
+            askContinue();
+        }
+    }
+
     private OrderedInventory askPromotionApplyAndGetItems(String name, Integer quantity) {
         try {
             if (inputView.readYesOrNo("현재 " + name + "은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까?"))
@@ -153,14 +171,4 @@ public class ProductController {
             return askPromotionNotAppliedAndGetItems(name, quantity, promotionNotAppliedQuantity);
         }
     }
-
-    private MemberShip askMembership(Long price) {
-        try {
-            return new MemberShip(inputView.readYesOrNo("멤버십 할인을 받으시겠습니까?"), price);
-        } catch (IllegalArgumentException e) {
-            outputView.printlnError(e.getMessage());
-            return askMembership(price);
-        }
-    }
-
 }
