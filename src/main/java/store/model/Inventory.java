@@ -26,7 +26,7 @@ public class Inventory {
     public OrderedInventory order(String name, Integer quantity) {
         validate(name, quantity);
         List<Item> targetItems = new ArrayList<>();
-        Item promotionItem = findNonePromotionItemByName(name);
+        Item promotionItem = findPromotionItemByName(name);
         if(promotionItem != null) {targetItems.add(promotionItem);}
 
         Item item = findNonePromotionItemByName(name);
@@ -58,7 +58,7 @@ public class Inventory {
         validateQuantity(targetItems, quantity);
     }
 
-    private static OrderedInventory getOrderedInventory(Integer quantity, List<Item> targetItems) {
+    private OrderedInventory getOrderedInventory(Integer quantity, List<Item> targetItems) {
         List<OrderedItem> orderedItems = new ArrayList<OrderedItem>();
         for (Item targetItem : targetItems) {
             OrderedItem orderedItem = targetItem.order(quantity);
